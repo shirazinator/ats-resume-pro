@@ -9,6 +9,7 @@ import { downloadResumeAsDocx } from '../utils/exportDocx';
 export default function Navbar({
   selectedTemplate,
   onChangeTemplate,
+  onOpenTemplateGallery,
   onLoadDemo,
   onUploadResume,
   onOpenAIModal,
@@ -44,6 +45,10 @@ export default function Navbar({
       case 'startup': return '🚀 Startup';
       case 'corporate': return '💼 Wall St';
       case 'executive': return '👔 Executive';
+      case 'datascience': return '🔬 AI / Data';
+      case 'newgrad': return '🎓 New Grad';
+      case 'healthcare': return '🩺 Medical';
+      case 'federal': return '⚖️ Federal';
       case 'faang':
       default: return '🏢 FAANG Tech';
     }
@@ -80,14 +85,20 @@ export default function Navbar({
                 <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
               </button>
               <div className="absolute right-0 mt-1 w-64 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-1.5 hidden group-hover:block hover:block z-50">
-                <div className="text-[10px] uppercase font-bold text-slate-500 px-2 py-1">
-                  Select ATS Target Format
+                <div className="flex items-center justify-between px-2 py-1 text-[10px] uppercase font-bold text-slate-500">
+                  <span>ATS Target Formats</span>
+                  <button
+                    onClick={onOpenTemplateGallery}
+                    className="text-indigo-400 hover:underline lowercase font-semibold"
+                  >
+                    view all 8 →
+                  </button>
                 </div>
                 <TemplateOption
                   active={selectedTemplate === 'faang'}
                   onClick={() => onChangeTemplate('faang')}
                   title="🏢 FAANG & Big Tech"
-                  subtitle="Google, Meta, Apple (Stanford Ivy style)"
+                  subtitle="Google, Meta, Apple (Stanford style)"
                 />
                 <TemplateOption
                   active={selectedTemplate === 'startup'}
@@ -102,11 +113,25 @@ export default function Navbar({
                   subtitle="McKinsey, Goldman, Wall St serif"
                 />
                 <TemplateOption
-                  active={selectedTemplate === 'executive'}
-                  onClick={() => onChangeTemplate('executive')}
-                  title="👔 Senior Executive & Leadership"
-                  subtitle="Directors, VPs, Management"
+                  active={selectedTemplate === 'datascience'}
+                  onClick={() => onChangeTemplate('datascience')}
+                  title="🔬 AI, Data Science & Research"
+                  subtitle="DeepMind, OpenAI, ML models"
                 />
+                <TemplateOption
+                  active={selectedTemplate === 'newgrad'}
+                  onClick={() => onChangeTemplate('newgrad')}
+                  title="🎓 Graduate & Career Switcher"
+                  subtitle="Education & projects first"
+                />
+                <div className="pt-1 mt-1 border-t border-slate-800">
+                  <button
+                    onClick={onOpenTemplateGallery}
+                    className="w-full text-center py-1.5 rounded-lg text-xs font-bold text-indigo-400 hover:bg-indigo-600/20"
+                  >
+                    Browse All 8 Industry Formats
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -121,13 +146,13 @@ export default function Navbar({
                   onClick={() => onLoadDemo('software_engineer')}
                   className="w-full text-left px-2.5 py-2 rounded-lg text-xs hover:bg-slate-800 text-slate-200"
                 >
-                  💻 Load Tech/SWE Demo
+                  💻 Tech / Software Engineer
                 </button>
                 <button
                   onClick={() => onLoadDemo('finance_consultant')}
                   className="w-full text-left px-2.5 py-2 rounded-lg text-xs hover:bg-slate-800 text-slate-200"
                 >
-                  💼 Load Consultant Demo
+                  💼 McKinsey / Consultant
                 </button>
                 <button
                   onClick={() => onLoadDemo('empty')}
@@ -189,39 +214,14 @@ export default function Navbar({
         {/* Secondary Row for Split-Screen / Mobile (< lg screen width) */}
         <div className="lg:hidden pb-2.5 pt-1 flex items-center gap-2 overflow-x-auto no-scrollbar border-t border-slate-800/60">
           {/* Format Selector for Split-Screen */}
-          <div className="relative group shrink-0">
-            <button className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 text-xs font-semibold text-slate-200 border border-slate-700 whitespace-nowrap">
-              <Layout className="w-3 h-3 text-indigo-400 shrink-0" />
-              <span className="text-white font-bold">{renderTemplateLabel()}</span>
-              <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
-            </button>
-            <div className="absolute left-0 mt-1 w-60 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-1.5 hidden group-hover:block hover:block z-50">
-              <TemplateOption
-                active={selectedTemplate === 'faang'}
-                onClick={() => onChangeTemplate('faang')}
-                title="🏢 FAANG & Big Tech"
-                subtitle="Stanford Ivy style"
-              />
-              <TemplateOption
-                active={selectedTemplate === 'startup'}
-                onClick={() => onChangeTemplate('startup')}
-                title="🚀 High-Growth Tech"
-                subtitle="Modern stack"
-              />
-              <TemplateOption
-                active={selectedTemplate === 'corporate'}
-                onClick={() => onChangeTemplate('corporate')}
-                title="💼 Corporate & Banking"
-                subtitle="Wall St serif"
-              />
-              <TemplateOption
-                active={selectedTemplate === 'executive'}
-                onClick={() => onChangeTemplate('executive')}
-                title="👔 Executive & Leadership"
-                subtitle="Directors & VPs"
-              />
-            </div>
-          </div>
+          <button
+            onClick={onOpenTemplateGallery}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 text-xs font-semibold whitespace-nowrap shrink-0"
+          >
+            <Layout className="w-3 h-3 text-indigo-400 shrink-0" />
+            <span className="font-bold">{renderTemplateLabel()}</span>
+            <span className="text-[10px] text-indigo-400/80">(Change)</span>
+          </button>
 
           {/* Demos Dropdown for Split-Screen */}
           <div className="relative group shrink-0">

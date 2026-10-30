@@ -6,6 +6,7 @@ import ResumeEditor from './components/ResumeEditor';
 import ResumePreview from './components/ResumePreview';
 import JobDescriptionModal from './components/JobDescriptionModal';
 import AIAssistantModal from './components/AIAssistantModal';
+import TemplateGalleryModal from './components/TemplateGalleryModal';
 import AutoUpdateBanner from './components/AutoUpdateBanner';
 import { INITIAL_RESUMES, SAMPLE_JOB_DESCRIPTIONS } from './constants/initialData';
 import { auditResumeATS } from './utils/atsEngine';
@@ -32,6 +33,7 @@ export default function App() {
 
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [leftTab, setLeftTab] = useState('editor'); // 'editor' | 'diagnostics'
 
   // Auto-save changes to localStorage so user never loses work on refresh or updates
@@ -120,6 +122,7 @@ export default function App() {
       <Navbar
         selectedTemplate={selectedTemplate}
         onChangeTemplate={setSelectedTemplate}
+        onOpenTemplateGallery={() => setIsGalleryOpen(true)}
         onLoadDemo={handleLoadDemo}
         onUploadResume={setResume}
         onOpenAIModal={() => setIsAIModalOpen(true)}
@@ -207,6 +210,8 @@ export default function App() {
           <ResumePreview
             resume={resume}
             selectedTemplate={selectedTemplate}
+            onChangeTemplate={setSelectedTemplate}
+            onOpenTemplateGallery={() => setIsGalleryOpen(true)}
           />
         </div>
       </main>
@@ -227,6 +232,14 @@ export default function App() {
         jobDescription={jobDescription}
         onApplyAIUpdate={handleApplyAIUpdate}
       />
+      {/* 8 Industry Formats Gallery Modal */}
+      <TemplateGalleryModal
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        selectedTemplate={selectedTemplate}
+        onSelectTemplate={setSelectedTemplate}
+      />
+
       {/* Auto Update Detector */}
       <AutoUpdateBanner />
     </div>
