@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import ScoreDashboard from './components/ScoreDashboard';
 import KeywordMatcher from './components/KeywordMatcher';
@@ -6,17 +6,50 @@ import ResumeEditor from './components/ResumeEditor';
 import ResumePreview from './components/ResumePreview';
 import JobDescriptionModal from './components/JobDescriptionModal';
 import AIAssistantModal from './components/AIAssistantModal';
+import AutoUpdateBanner from './components/AutoUpdateBanner';
 import { INITIAL_RESUMES, SAMPLE_JOB_DESCRIPTIONS } from './constants/initialData';
 import { auditResumeATS } from './utils/atsEngine';
 import { Sparkles, ArrowRight, ShieldCheck, CheckCircle2, FileCheck2 } from 'lucide-react';
 
 export default function App() {
-  const [resume, setResume] = useState(INITIAL_RESUMES.software_engineer);
-  const [jobDescription, setJobDescription] = useState(SAMPLE_JOB_DESCRIPTIONS.software_engineer);
-  const [selectedTemplate, setSelectedTemplate] = useState('faang');
+  // Restore user drafts from localStorage if available
+  const [resume, setResume] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ats_resume_draft');
+      return saved ? JSON.parse(saved) : INITIAL_RESUMES.software_engineer;
+    } catch {
+      return INITIAL_RESUMES.software_engineer;
+    }
+  });
+
+  const [jobDescription, setJobDescription] = useState(() => {
+    return localStorage.getItem('ats_jd_draft') || SAMPLE_JOB_DESCRIPTIONS.software_engineer;
+  });
+
+  const [selectedTemplate, setSelectedTemplate] = useState(() => {
+    return localStorage.getItem('ats_template') || 'faang';
+  });
+
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [leftTab, setLeftTab] = useState('editor'); // 'editor' | 'diagnostics'
+
+  // Auto-save changes to localStorage so user never loses work on refresh or updates
+  useEffect(() => {
+    try {
+      localStorage.setItem('ats_resume_draft', JSON.stringify(resume));
+    } catch (e) {
+      console.warn("Could not save to localStorage", e);
+    }
+  }, [resume]);
+
+  useEffect(() => {
+    localStorage.setItem('ats_jd_draft', jobDescription);
+  }, [jobDescription]);
+
+  useEffect(() => {
+    localStorage.setItem('ats_template', selectedTemplate);
+  }, [selectedTemplate]);
 
   // Run ATS Audit dynamically whenever resume or job description updates
   const auditResult = useMemo(() => {
@@ -194,6 +227,8 @@ export default function App() {
         jobDescription={jobDescription}
         onApplyAIUpdate={handleApplyAIUpdate}
       />
+      {/* Auto Update Detector */}
+      <AutoUpdateBanner />
     </div>
   );
 }
